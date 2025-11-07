@@ -51,14 +51,14 @@ class ActorBT(py_trees.behaviour.Behaviour):
         super().__init__(name)
         self.args = args
         self.type = type
-        if isinstance(type, tuple):
-            self.callee = list(type)
-        else:
-            self.callee = [(type, self.args)]
     
     def prepare(self):
         type = self.type
         self.shared = SharedData()
+        if isinstance(type, tuple):
+            self.callee = list(type)
+        else:
+            self.callee = [(type, self.args)]
         self.shared.set_callee(self.callee)
         self.logger.info(f'start {type}')
     
