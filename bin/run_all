@@ -1,7 +1,8 @@
 source ~/turtlebot3_ws/install/setup.bash
 source ~/roscommon/ws_moveit2/install/setup.bash
-ros2 launch turtlebot3_lime_bringup gazebo.launch.py x_pose:=0 y_pose:=0 world:=/project/resource/sim_house.world &
+source ~/webots_ws/install/setup.bash
+ros2 launch turtlebot3_lime_webots robot_launch.py world:=sim_house.wbt &
 sleep 5
 ros2 launch turtlebot3_lime_moveit_config servo.launch.py use_sim:=true &
 sleep 1
-ros2 launch turtlebot3_lime_bringup moveit_navigation_use_sim_time.launch.py map_yaml_file:=/project/resource/map/sim_house_map.yaml
+ros2 launch turtlebot3_lime_bringup moveit_navigation_use_sim_time.launch.py map_yaml_file:=/project/resource/map/sim_house_webots.yaml

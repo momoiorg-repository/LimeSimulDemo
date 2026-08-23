@@ -1,0 +1,11 @@
+<CycloneDDS>
+    <Domain>
+        <General>
+            <AllowMulticast>false</AllowMulticast>
+        </General>
+        <Discovery>
+            <ParticipantIndex>auto</ParticipantIndex>
+            <MaxAutoParticipantIndex>1000</MaxAutoParticipantIndex>
+        </Discovery>
+    </Domain>
+</CycloneDDS>

@@ -1,0 +1,13 @@
+Class Name,Arguments
+Adjust,
+Fit,
+Fit2,distance
+Pick,
+Open,
+ArmHome,
+Close,
+Arm0,
+FullClose,
+ArmTurn,value=0
+Ad0,
+ArmAngle,j1; j2; j3; j4; j5; j6

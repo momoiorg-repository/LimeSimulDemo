@@ -9,7 +9,8 @@ def cm_init(node):
     register_subsystem('robot', Tb3)
     init_spin(node)
     run_actor('init_realsense')
-    register_subsystem('map', MapSystem)
+    # register_subsystem('map', MapSystem)
+    run_actor('make_symbolic_link')
     run_actor('update_bt')
     Thread(target=CommandInterpreter().do_command).start()
 

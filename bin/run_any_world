@@ -1,0 +1,4 @@
+source ~/webots_ws/install/setup.bash
+# $1 is a world filename relative to turtlebot3_lime_webots/worlds/ (e.g. sim_house.wbt),
+# not an absolute path like the old Gazebo version took.
+ros2 launch turtlebot3_lime_webots robot_launch.py world:=$1

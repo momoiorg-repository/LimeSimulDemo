@@ -1,8 +1,1 @@
-<root>
-    <BehaviorTree ID="test1">
-    <Sequence name="main">
-        <SetBlackboard name="set_target" key="target_pose" value="[(1.0, 0.0, 0.0)]" />
-        <GoToPose name="move_to_place_loc"/>
-    </Sequence>
-    </BehaviorTree>
-</root>
+/root/practice_ws/trees/test_goto.xml

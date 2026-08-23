@@ -1651,6 +1651,7 @@
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
-  <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so"/>
+    <plugin name="gazebo_link_attacher" filename="libgazebo_link_attacher.so"/>
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so"/>
   </world>
 </sdf>

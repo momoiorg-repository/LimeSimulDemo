@@ -1,0 +1,12 @@
+<root>
+    <BehaviorTree ID="test_watch">
+    <Sequence name="main">
+        <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
+        <Watch name="watch_coke"/>
+        <SetDetector name="set ball_detector" func_name="my_dtcs.d_ball" id="None"/>
+        <Watch name="watch_ball"/>
+    </Sequence>
+    </BehaviorTree>
+</root>
+
+

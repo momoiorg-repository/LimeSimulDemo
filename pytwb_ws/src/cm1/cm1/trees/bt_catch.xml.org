@@ -1,0 +1,19 @@
+<root>
+    <BehaviorTree ID="bt_catch">
+    <Sequence name="main">
+        <Watch name="watch_coke"/>
+        <GoToPose name="goto_sched_point"/>
+        <Watch name="watch_coke"/>
+        <GoToPose name="reach"/>
+        <ReachCoke name="reach_coke" />
+        <Pick name="pick"/>
+        <ObjectLocation name="object_location"/>
+        <Pause name="pause" is_on="[False]"/>
+        <Shift name="shift" target="[0.175]"/>
+        <Sleep name="sleep" time="[3]"/>
+        <Fit2 name="fit2" distance="[0.175]"/>
+        <Close name="close"/>
+        <ArmHome name="home"/>
+    </Sequence>
+    </BehaviorTree>
+</root>

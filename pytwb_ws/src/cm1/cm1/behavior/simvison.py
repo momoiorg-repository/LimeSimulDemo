@@ -76,7 +76,7 @@ class LookForCoke(py_trees.behaviour.Behaviour):
             if self.tran:
                 self.tran.abort(self.tran)
             self.logger.info(f"Terminated {new_status}")
-    
+ 
 class ResPoint:
     def __init__(self, point_bag) -> None:
         self.x = point_bag.x
@@ -113,6 +113,26 @@ class Watch(py_trees.behaviour.Behaviour):
     
     def terminate(self, new_status):
         if self.candidate:
+            self.bb.set('target_pose', [self.candidate.x, self.candidate.y, 1.57])
             self.logger.info(f"Concluded x:{self.candidate.x}, y:{self.candidate.y}")
         else:
             self.logger.info(f"Terminated {new_status}")
+
+@behavior
+class GetObjFront(py_trees.behaviour.Behaviour):
+    def __init__(self, name, node, debug=False):
+        super(GetObjFront, self).__init__(name)
+        self.bb = py_trees.blackboard.Blackboard()
+        self.debug = False
+
+    def initialise(self):
+        self.running = True
+        self.x, self.y, self.theta = run_actor('object_front', "map")
+        self.logger.info(f"Concluded x:{self.x}, y:{self.y}")
+
+    def update(self):
+        if self.x and self.y and self.theta:
+            self.bb.set('target_pose', [self.x, self.y, self.theta])
+            return py_trees.common.Status.SUCCESS
+        else:
+            return py_trees.common.Status.FAILURE

@@ -1,3 +1,3 @@
 source ~/turtlebot3_ws/install/setup.bash
-ros2 launch turtlebot3_lime_navigation2 navigation2.launch.py map_yaml_file:=/project/resource/map/sim_house_map.yaml
+ros2 launch turtlebot3_lime_navigation2 navigation2.launch.py map_yaml_file:=/project/resource/map/sim_house_webots.yaml
 

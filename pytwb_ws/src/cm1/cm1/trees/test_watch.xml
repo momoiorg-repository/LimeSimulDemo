@@ -1,7 +1,1 @@
-<root>
-    <BehaviorTree ID="bt_catch">
-    <Sequence name="main">
-        <Watch name="watch_coke"/>
-    </Sequence>
-    </BehaviorTree>
-</root>
+/root/practice_ws/trees/test_watch.xml

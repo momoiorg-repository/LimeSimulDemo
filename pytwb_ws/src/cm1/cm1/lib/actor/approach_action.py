@@ -5,8 +5,9 @@ from ros_actor import actor, SubNet
 from ..pointlib import PointEx
 from geometry_msgs.msg import Twist
 from tf_transformations import euler_from_quaternion 
+import time
 
-SPEED = 0.03
+SPEED = 0.06
 TURN = 0.3
 
 class ApproachAction(SubNet):
@@ -24,6 +25,14 @@ class ApproachAction(SubNet):
     @actor
     def stop(self):
         self.move(0)
+
+    @actor
+    def walk(self, distance):
+        duration = distance / SPEED
+        start_time = time.time()
+        while (time.time() - start_time) < duration:
+            self.move()
+        self.run_actor("stop")
     
     # direct command to motor
     @actor    
@@ -48,13 +57,19 @@ class ApproachAction(SubNet):
         assumed = -1
         current = 0
         if speed > 0.5:
+            # pid = PID(-10, 0, -0.25,
+            #         output_limits=(radians(-80),radians(80)))
+            # print('PID,-10,0,-0.25', file=f)
             pid = PID(-10, 0, -0.25,
-                    output_limits=(radians(-80),radians(80)))
-            print('PID,-10,0,-0.25', file=f)
+                    output_limits=(radians(-40),radians(40)))
+            print('PID,-10,0,-0.1', file=f)
         else:
+            # pid = PID(-10, 0, -0.05,
+            #         output_limits=(radians(-80),radians(80)))
+            # print('PID,-10,0,-0.25', file=f)
             pid = PID(-10, 0, -0.05,
-                    output_limits=(radians(-80),radians(80)))
-            print('PID,-10,0,-0.05', file=f)
+                    output_limits=(radians(-40),radians(40)))
+            print('PID,-10,0,-0.1', file=f)
 
         while True:
             log = {}
@@ -78,6 +93,7 @@ class ApproachAction(SubNet):
             d_y = y - start_y
             last_current = current
             current = sqrt(d_x**2 + d_y**2)
+            print(f"{distance=}")
             if distance > 0:
                 assumed = distance
             else:
@@ -89,7 +105,13 @@ class ApproachAction(SubNet):
                 f.close()
                 return target_angle
             count += 1
-    
+            # This loop had no rate limit, so it re-ran the full color+depth
+            # vision pipeline as fast as physically possible (much faster
+            # than the camera itself updates), burning CPU on redundant
+            # frames and feeding the PID controller noisy/inconsistent
+            # timing. Cap it to a sane control rate instead.
+            self.run_actor('sleep', 0.05)
+
     # final approach to the coke
     @actor
     def targetted_walk_armdown(self, len, fname="shift.csv", speed=0.25):
@@ -98,9 +120,9 @@ class ApproachAction(SubNet):
         start_x, start_y, _ = self.get_odom()
         assumed = -1
         current = 0
-        pid = PID(-15, 0, -0.05,
-            output_limits=(radians(-80),radians(80)))
-        print('PID,-15,0,-0.05', file=f)
+        pid = PID(-5, 0, -0.05,
+            output_limits=(radians(-40),radians(40)))
+        print('PID,-7,0,-0.05', file=f)
 
         while True:
             log = {}
@@ -130,7 +152,13 @@ class ApproachAction(SubNet):
                 f.close()
                 return target_angle
             count += 1
-    
+            # This loop had no rate limit, so it re-ran the full color+depth
+            # vision pipeline as fast as physically possible (much faster
+            # than the camera itself updates), burning CPU on redundant
+            # frames and feeding the PID controller noisy/inconsistent
+            # timing. Cap it to a sane control rate instead.
+            self.run_actor('sleep', 0.05)
+
     # turn by driving motor directly
     # the move result is not reflected to navigation target
     @actor    
@@ -150,7 +178,7 @@ class ApproachAction(SubNet):
         
     # adjust location
     @actor
-    def reach_coke(self, target=0.26):
+    def reach_coke(self, target=0.28):
         trans = self.run_actor('map_trans')
         start = PointEx(0.0, 0.0)
         start.setTransform(trans.transform)
@@ -162,7 +190,16 @@ class ApproachAction(SubNet):
         actual.setTransform(trans.transform)
         dx = actual.x - start.x
         dy = actual.y - start.y
-        dir = atan2(dy, dx)
+        # If the walk barely moved the robot (e.g. it was already close
+        # enough before the walk even started), dx/dy are too small/noisy
+        # for atan2 to give a meaningful heading, and it can send the robot
+        # spinning off toward a bogus direction. Keep the robot's actual
+        # current heading instead in that case.
+        if sqrt(dx**2 + dy**2) < 0.05:
+            rot = trans.transform.rotation
+            _, _, dir = euler_from_quaternion([rot.x, rot.y, rot.z, rot.w])
+        else:
+            dir = atan2(dy, dx)
         self.run_actor('goto', actual.x, actual.y, dir)
 #        joint = [0.0, 1.75, 1.4, 0.0, -1.6, 0.0]
 #        self.run_actor('move_joint', *joint)
@@ -184,7 +221,16 @@ class ApproachAction(SubNet):
         actual.setTransform(trans.transform)
         dx = actual.x - start.x
         dy = actual.y - start.y
-        dir = atan2(dy, dx)
+        # If the walk barely moved the robot (e.g. it was already close
+        # enough before the walk even started), dx/dy are too small/noisy
+        # for atan2 to give a meaningful heading, and it can send the robot
+        # spinning off toward a bogus direction. Keep the robot's actual
+        # current heading instead in that case.
+        if sqrt(dx**2 + dy**2) < 0.05:
+            rot = trans.transform.rotation
+            _, _, dir = euler_from_quaternion([rot.x, rot.y, rot.z, rot.w])
+        else:
+            dir = atan2(dy, dx)
         self.run_actor('goto', actual.x, actual.y, dir)
 #        self.run_actor('arm_turn', target_angle / 2)
         return True        
@@ -206,7 +252,16 @@ class ApproachAction(SubNet):
         actual.setTransform(trans.transform)
         dx = actual.x - start.x
         dy = actual.y - start.y
-        dir = atan2(dy, dx)
+        # If the walk barely moved the robot (e.g. it was already close
+        # enough before the walk even started), dx/dy are too small/noisy
+        # for atan2 to give a meaningful heading, and it can send the robot
+        # spinning off toward a bogus direction. Keep the robot's actual
+        # current heading instead in that case.
+        if sqrt(dx**2 + dy**2) < 0.05:
+            rot = trans.transform.rotation
+            _, _, dir = euler_from_quaternion([rot.x, rot.y, rot.z, rot.w])
+        else:
+            dir = atan2(dy, dx)
         self.run_actor('goto', actual.x, actual.y, dir)
     
     # adjust body angle to face the subject

@@ -1,12 +1,13 @@
 services:
   lime_simul_demo:
-    image: lime_simul_demo-image
+    image: course_lime-image
     build:
       context: .
       dockerfile: Dockerfile
       args:
         ROS_DISTRO: humble
     network_mode: host
+    privileged: true
     ipc: host
     environment:
       - DISPLAY=${DISPLAY}
@@ -17,11 +18,7 @@ services:
       - ./pytwb_ws:/root/pytwb_ws:rw
       - ./bin:/root/bin:rw
       - ./roscommon:/root/roscommon:rw
-      - type: bind
-        source: /tmp/.X11-unix
-        target: /tmp/.X11-unix
-      - type: bind
-        source: '${XDG_RUNTIME_DIR}/wayland-0'
-        target: /tmp/wayland-0
-    command: xterm -fa 'Hack' -fs 24 -display ${DISPLAY} -T 'cm main'
+      - $HOME/.Xauthority:/root/.Xauthority
+      - ./practice_ws:/root/practice_ws:rw
+    command: xterm -fn 12X24 -display ${DISPLAY} -T 'cm main'
 

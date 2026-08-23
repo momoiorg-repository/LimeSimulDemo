@@ -39,10 +39,10 @@ repositories:
   pymoveit2:
     type: git
     url: https://github.com/AndrejOrsula/pymoveit2.git
-  gazebo-pkgs:
-    type: git
-    url: https://github.com/kongoncharuk/gazebo-pkgs
-    version: humble
+  #gazebo-pkgs:
+  #  type: git
+  #  url: https://github.com/kongoncharuk/gazebo-pkgs
+  #  version: humble
   pytwb:
     type: git
     url: https://github.com/momoiorg-repository/pytwb.git
@@ -55,3 +55,7 @@ repositories:
   ros_actor:
     type: git
     url: https://github.com/momoiorg-repository/ros_actor.git
+  IFRA_LinkAttacher:
+    type: git
+    url: https://github.com/IFRA-Cranfield/IFRA_LinkAttacher.git
+    version: humble

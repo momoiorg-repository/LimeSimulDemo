@@ -1,0 +1,8 @@
+<root>
+    <BehaviorTree ID="test_goto">
+    <Sequence name="main">
+        <SetDestination name="set_target" value="[(1, 0, 90)]"/>
+        <GoToPose name="move_to_place_loc"/>
+    </Sequence>
+    </BehaviorTree>
+</root>

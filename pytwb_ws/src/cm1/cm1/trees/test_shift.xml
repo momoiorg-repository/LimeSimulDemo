@@ -1,5 +1,5 @@
 <root>
-    <BehaviorTree ID="bt_shift">
+    <BehaviorTree ID="test_shift">
     <Sequence name="main">    
         <Watch name="watch_coke"/>
         <Shift name="shift" target="[0.6]"/>

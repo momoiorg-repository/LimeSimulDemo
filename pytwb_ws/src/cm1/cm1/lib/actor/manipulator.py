@@ -19,11 +19,24 @@ def wait_until_executed(arm):
         sleep(0.5)
 
 class ManipulatorNetwork(SubNet):
+    # Lift the end effector straight up from wherever it currently is
+    # (relative joint adjustment, not an absolute target), before handing
+    # off to home(). home() plans a joint-space move from the current pose
+    # with no idea an object is being held, so on a short/close pick it can
+    # dip through a low path and drag the object along the ground; lifting
+    # clear first avoids that regardless of where the pick happened.
+    @actor
+    def pick_up(self):
+        joint = [0.0, radians(34), radians(87), 0.0, radians(-78), 0.0]
+        self.run_actor('move_joint', *joint)
+        return True
+
+
     # set to home position
     @actor
     def home(self):
 #        joint = [0.0, 1.0, 1.575, 0.0, -1.0, 0.0]
-        joint = [0.0, radians(23), radians(80), 0.0, -radians(14), 0.0]
+        joint = [0.0, radians(-63), radians(107), 0.0, radians(56), 0.0]
         self.run_actor('move_joint', *joint)
         return True
 
@@ -91,36 +104,14 @@ class ManipulatorNetwork(SubNet):
     # open gripper
     @actor
     def open(self):
-        self.run_actor('open_gripper')
-        self.run_actor('sleep', 2)
+        gripper = self.get_value('gripper')
+        gripper.open()
+        wait_until_executed(gripper)
         return True
 
     # close gripper
     @actor
     def close(self):
-        self.run_actor('close_gripper')
-        return True
-    
-    @actor
-    def full_close(self):
-        gripper = self.get_value('gripper')
-        goal = GripperCommandAction.Goal()
-        goal.command.position = 0.012
-        goal.command.max_effort = 0.0
-        gripper.move_to_configuration(goal)
-        wait_until_executed(gripper)
-        self.run_actor('sleep', 2)
-        return True
-
-    @actor
-    def open_gripper(self):
-        gripper = self.get_value('gripper')
-        gripper.open()
-        wait_until_executed(gripper)
-        return True
-   
-    @actor
-    def close_gripper(self):
         gripper = self.get_value('gripper')
         gripper.close()
         wait_until_executed(gripper)
@@ -227,8 +218,8 @@ class ManipulatorNetwork(SubNet):
         self.run_actor('sleep', 3.0)
         return True
         '''
-        joint = [0.0, 1.75, 1.4, 0.0, -1.6, 0.0]
-#        joint = [0.0, radians(89), radians(84), 0.0, radians(-82), 0.0]
+        # joint = [0.0, 1.75, 1.4, 0.0, -1.6, 0.0]
+        joint = [0.0, radians(97), radians(83), 0.0, radians(-83), 0.0]
         joint[0] = dir
         self.run_actor('move_joint', *joint)
         return True
@@ -276,3 +267,8 @@ class ManipulatorNetwork(SubNet):
         state_dict = dict(zip(state.name, state.position))
         return state_dict
         
+    @actor
+    def arm_angle(self, j1=0, j2=0, j3=0, j4=0, j5=0, j6=0):
+        joint = [radians(j1), radians(j2), radians(j3), radians(j4), radians(j5), radians(j6)]
+        self.run_actor('move_joint', *joint)
+        return True

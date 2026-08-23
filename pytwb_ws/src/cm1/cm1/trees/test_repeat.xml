@@ -1,0 +1,10 @@
+<root>
+    <BehaviorTree ID="test_repeat">
+        <Repeat name="repeat" num_success="[3]"> 
+            <Sequence name="subroop">
+                <ArmHome name="home"/>
+                <Pick name="pick"/>
+            </Sequence>
+        </Repeat>
+    </BehaviorTree>
+</root>

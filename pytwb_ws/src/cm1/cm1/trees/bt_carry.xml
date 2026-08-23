@@ -2,7 +2,7 @@
     <BehaviorTree ID="bt_carry">
     <Sequence name="main">
         <ArmHome name="arm_home" />
-        <SetBlackboard name="set_target" key="target_pose" value="[(1.0, 3.0, 1.57)]" />
+        <SetDestination name="set_target" value="[(1.0, 3.0, 1.57)]" />
         <GoToPose name="move_to_place_loc"/>
         <Approach name="approach" target="[0.13]" />
         <!--

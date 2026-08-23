@@ -1,0 +1,3 @@
+source ~/turtlebot3_ws/install/setup.bash
+source ~/webots_ws/install/setup.bash
+ros2 launch turtlebot3_lime_webots robot_launch.py world:=turtlebot3_lime_test.wbt

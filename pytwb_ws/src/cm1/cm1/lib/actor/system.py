@@ -15,11 +15,12 @@ from tf2_ros.buffer import Buffer
 from tf2_ros import TransformException
 from tf2_ros.transform_listener import TransformListener
 from nav2_msgs.action import NavigateToPose
-from sensor_msgs.msg import Image, CameraInfo
+from sensor_msgs.msg import Image, CameraInfo, JointState
 from geometry_msgs.msg import Twist
 from action_msgs.msg import GoalStatus
 from nav_msgs.msg import OccupancyGrid
 from nav_msgs.msg import Odometry
+from gazebo_msgs.msg import ModelStates, LinkStates
 
 import transforms3d
 from pymoveit2 import MoveIt2, GripperInterface
@@ -41,9 +42,9 @@ from .tools import Tools
 MOVE_GROUP_ARM: str = "arm"
 MOVE_GROUP_GRIPPER: str = "gripper"
 
-OPEN_GRIPPER_JOINT_POSITIONS: List[float] = [0.04, 0.04]
-CLOSED_GRIPPER_JOINT_POSITIONS: List[float] = [0.008, 0.008]
-# CLOSED_GRIPPER_JOINT_POSITIONS: List[float] = [0.0, 0.0]
+OPEN_GRIPPER_JOINT_POSITIONS: List[float] = [0.019, 0.019]
+# CLOSED_GRIPPER_JOINT_POSITIONS: List[float] = [0.007, 0.007]
+CLOSED_GRIPPER_JOINT_POSITIONS: List[float] = [-0.010, -0.010]
 
 def joint_names() -> List[str]:
     return [
@@ -73,6 +74,8 @@ class Tb3(SubSystem):
         self.add_subsystem('navigation', Tb3NavigationSystem)
         self.add_subsystem('manipulator', Tb3ManipulatorSystem)
         self.add_subsystem('camera', Tb3CameraSystem)
+        self.register_subscriber('model_states', ModelStates, 'model_states', 10)
+        self.register_subscriber('link_states', LinkStates, 'link_states', 10)
         self.add_network(Tools)
         node = self.get_value('node')
         tf_buffer = Buffer()
@@ -166,6 +169,19 @@ class Tb3NavigationSystem(SubSystem):
         self.set_value('current_pose', (x, y, theta))
 #        return (result.status == GoalStatus.STATUS_SUCCEEDED)
         return True
+
+    @actor
+    def goto_deg(self, x, y, degree):
+        rad = radians(degree)
+        theta = round(rad, 2)
+        x, y = float(x), float(y)
+
+        goal = self.create_move_base_goal(x, y, theta)
+        result = self.run_actor('navigate', goal)
+        self.set_value('current_pose', (x, y, theta))
+#        return (result.status == GoalStatus.STATUS_SUCCEEDED)
+        return True
+
     
     @actor
     def migrate(self, dx=0.0, dy=0.0, dtheta=0.0):
@@ -228,6 +244,7 @@ class Tb3ManipulatorSystem(SubSystem):
         self.set_value('arm', arm)
         self.set_value('gripper', gripper) 
         self.set_value('joint_stat', [0.0, 0.0, 0.0, 0.0])  
+        self.register_subscriber('joints',JointState,"/joint_states",10)
     
 class MapSystem(SubSystem):
     def __init__(self, name, parent, map_file=None) -> None:

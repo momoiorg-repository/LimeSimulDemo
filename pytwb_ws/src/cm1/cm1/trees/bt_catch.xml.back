@@ -1,0 +1,18 @@
+<root>
+    <BehaviorTree ID="bt_catch">
+    <Sequence name="main">
+        <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke"/>
+        <Watch name="watch_coke"/>
+        <GetObjFront name="get_coke_front"/>
+        <GoToPose name="move_to_place_loc"/>
+        <ReachObj name="reach_coke" />
+        <Pick name="pick"/>
+        <ObjectLocation name="object_location"/>
+        <Shift name="shift" target="[0.175]"/>
+        <Sleep name="sleep" time="[3]"/>
+        <Fit2 name="fit2" distance="[0.175]"/>
+        <Close name="close"/>
+        <ArmHome name="home"/>
+    </Sequence>
+    </BehaviorTree>
+</root>

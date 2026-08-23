@@ -1,0 +1,3 @@
+source ~/turtlebot3_ws/install/setup.bash
+source ~/roscommon/ws_moveit2/install/setup.bash
+ros2 launch turtlebot3_lime_moveit_config servo.launch.py use_sim:=true
